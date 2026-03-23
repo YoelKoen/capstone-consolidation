@@ -1,0 +1,63 @@
+{% extends 'news_engine/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-5">
+        <div class="col-md-4 text-center">
+            <i class="bi bi-person-circle text-secondary" style="font-size: 8rem;"></i>
+        </div>
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="fw-bold mb-1">{{ journalist.username }}</h1>
+                    <p class="text-primary mb-3">
+                        <i class="bi bi-building me-1"></i> 
+                        {{ journalist.publisher.name|default:"Independent Journalist" }}
+                    </p>
+                </div>
+                
+                {% if user.is_authenticated and user != journalist %}
+                    <a href="{% url 'subscribe' 'journalist' journalist.id %}" 
+                       class="btn btn-lg {% if followed %}btn-secondary{% else %}btn-primary{% endif %}">
+                        {% if followed %}
+                            <i class="bi bi-person-check-fill"></i> Unfollow
+                        {% else %}
+                            <i class="bi bi-person-plus-fill"></i> Follow Journalist
+                        {% endif %}
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="bg-light p-4 rounded shadow-sm border">
+                <h5 class="fw-bold">About</h5>
+                <p class="mb-0">{{ journalist.bio|default:"This journalist hasn't provided a bio yet." }}</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="fw-bold mb-4 border-bottom pb-2">Portfolio ({{ articles.count }})</h3>
+    <div class="row">
+        {% for article in articles %}
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        {% if article.category %}
+                            <span class="badge bg-info text-dark mb-2">{{ article.category.name }}</span>
+                        {% endif %}
+                        <h5 class="fw-bold">
+                            <a href="{% url 'article_detail' article.pk %}" class="text-decoration-none text-dark">
+                                {{ article.title }}
+                            </a>
+                        </h5>
+                        <p class="small text-muted mb-0">Published: {{ article.created_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p class="text-muted fst-italic">No published articles yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

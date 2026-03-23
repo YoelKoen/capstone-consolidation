@@ -1,0 +1,99 @@
+{% extends 'news_engine/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h1 class="fw-bold text-primary">
+                <i class="bi bi-shield-lock"></i> Editor Desk
+            </h1>
+            <p class="text-muted">Review submissions, approve news, and manage community newsletters.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <span class="badge bg-warning text-dark p-2 fs-6 shadow-sm">
+                {{ pending_articles.count }} Submissions Pending
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Pending Review</h5>
+                    <i class="bi bi- hourglass-split text-muted"></i>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Article Info</th>
+                                <th>Author</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in pending_articles %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">{{ article.title }}</div>
+                                    <small class="text-muted">
+                                        {{ article.category.name }} | {{ article.created_at|date:"M d, H:i" }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        {{ article.author.username }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{% url 'article_detail' article.pk %}" class="btn btn-sm btn-outline-secondary" title="Preview">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'approve_article' article.id %}" class="btn btn-sm btn-success">
+                                            <i class="bi bi-check-lg"></i> Approve
+                                        </a>
+                                        <a href="{% url 'reject_article' article.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to reject and delete this article?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-5 text-muted">
+                                    <i class="bi bi-check2-all display-4 d-block mb-2"></i>
+                                    All caught up! No pending articles.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0 fw-bold">Recent Newsletters</h5>
+                </div>
+                <div class="card-body">
+                    {% for newsletter in newsletters|slice:":5" %}
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="fw-bold text-truncate" style="max-width: 250px;">{{ newsletter.title }}</div>
+                            <small class="text-muted">By {{ newsletter.creator.username }} • {{ newsletter.created_at|date:"M d" }}</small>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small">No newsletters sent yet.</p>
+                    {% endfor %}
+                    <a href="{% url 'submit_newsletter' %}" class="btn btn-primary btn-sm w-100 mt-2">
+                        <i class="bi bi-plus-lg"></i> Create New Newsletter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

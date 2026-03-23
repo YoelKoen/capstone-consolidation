@@ -1,0 +1,47 @@
+{% extends "news_engine/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white p-3">
+                    <h3 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Submit New Article</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <strong>Please fix the errors below:</strong>
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text text-muted">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">Submit for Editor Review</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <a href="{% url 'article_list' %}" class="text-decoration-none text-muted">← Back to News Feed</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

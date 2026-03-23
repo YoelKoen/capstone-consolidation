@@ -1,0 +1,124 @@
+{% extends "news_engine/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active">{{ article.category.name }}</li>
+            </ol>
+            <a href="{% url 'article_list' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <header class="mb-4">
+                <h1 class="display-4 fw-bold mb-3">{{ article.title }}</h1>
+                
+                <div class="d-flex align-items-center text-muted mb-4 flex-wrap gap-3">
+                    <div>
+                        <strong>By 
+                            {% if article.author %}
+                                <a href="{% url 'journalist_detail' article.author.pk %}" class="text-decoration-none text-dark">
+                                    {{ article.author.username }}
+                                </a>
+                            {% else %}
+                                <span class="text-danger">Anonymous</span>
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    {% if user.is_authenticated and article.author and user != article.author %}
+                        <div>
+                            <a href="{% url 'subscribe' 'journalist' article.author.id %}" 
+                               class="btn btn-sm {% if followed %}btn-info{% else %}btn-outline-info{% endif %}">
+                                {% if followed %} 
+                                    <i class="bi bi-person-check-fill"></i> Following
+                                {% else %} 
+                                    <i class="bi bi-person-plus"></i> Follow 
+                                {% endif %}
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <div class="vr d-none d-md-block"></div>
+                    <div><i class="bi bi-calendar3"></i> {{ article.created_at|date:"F d, Y" }}</div>
+                    <span class="badge bg-primary">{{ article.category.name }}</span>
+                </div>
+            </header>
+
+            {% if user.is_authenticated %}
+                {% if user == article.author or user.role == "editor" or user.is_staff %}
+                    <div class="alert alert-light border d-flex justify-content-end gap-2 shadow-sm mb-4">
+                        <small class="align-self-center me-auto text-uppercase fw-bold text-muted">Management Tools:</small>
+                        <a href="{% url 'edit_article' article.pk %}" class="btn btn-warning btn-sm px-3">Edit</a>
+                        <a href="{% url 'delete_article' article.pk %}" class="btn btn-danger btn-sm px-3">Delete</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if article.image %}
+                <div class="mb-5 shadow-sm rounded overflow-hidden">
+                    <img src="{{ article.image.url }}" class="img-fluid w-100" alt="{{ article.title }}" style="max-height: 500px; object-fit: cover;">
+                </div>
+            {% endif %}
+
+            <div class="article-body fs-5 mb-5" style="line-height: 1.8; color: #2c3e50; white-space: pre-wrap;">
+                {{ article.content }}
+            </div>
+
+            <hr class="my-5">
+
+            <section class="comments-section p-4 bg-white rounded-3 shadow-sm mb-5 border">
+                <h3 class="mb-4 fw-bold">Discussion ({{ comments.count }})</h3>
+                
+                {% if user.is_authenticated %}
+                    <div class="mb-5">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ comment_form.content }}
+                            </div>
+                            <button type="submit" class="btn btn-primary px-4">Post Comment</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="alert alert-secondary py-3 text-center">
+                        <a href="{% url 'login' %}" class="fw-bold">Log in</a> to join the conversation.
+                    </div>
+                {% endif %}
+
+                <div class="mt-4">
+                    {% for comment in comments %}
+                        <div class="d-flex mb-4">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    {{ comment.author.username|slice:":1"|upper }}
+                                </div>
+                            </div>
+                            <div class="ms-3 flex-grow-1">
+                                <div class="bg-light p-3 rounded-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <h6 class="fw-bold mb-0">{{ comment.author.username }}</h6>
+                                        <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                                    </div>
+                                    <p class="mb-0 text-dark">{{ comment.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-chat-dots fs-1"></i>
+                            <p class="mt-2">Be the first to share your thoughts!</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

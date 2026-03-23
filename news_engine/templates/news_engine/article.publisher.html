@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <header class="mb-4">
+                <h1 class="display-4 fw-bold mb-3">{{ article.title }}</h1>
+                <div class="d-flex align-items-center text-muted mb-4">
+                    <div class="me-3">
+                        <strong>By {{ article.author.username }}</strong>
+                    </div>
+                    
+                    {% if user.is_authenticated and user != article.author %}
+                        <div class="me-3">
+                            <a href="{% url 'subscribe' 'journalist' article.author.id %}" class="btn btn-sm {% if article.author in user.subscribed_journalists.all %}btn-info{% else %}btn-outline-info{% endif %}">
+                                {% if article.author in user.subscribed_journalists.all %} Unfollow {% else %} Follow {% endif %} {{ article.author.username }}
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <div class="vr me-3"></div>
+                    <div class="me-3">{{ article.created_at|date:"F d, Y" }}</div>
+                    <span class="badge bg-info text-dark">{{ article.category }}</span>
+                </div>
+
+                {% if user.is_authenticated and article.author.publisher %}
+                    <div class="mb-4">
+                        <a href="{% url 'subscribe' 'publisher' article.author.publisher.id %}" class="btn btn-sm {% if article.author.publisher in user.subscribed_publishers.all %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                            {% if article.author.publisher in user.subscribed_publishers.all %} Subscribed to {% else %} Follow {% endif %} {{ article.author.publisher.name }}
+                        </a>
+                    </div>
+                {% endif %}
+            </header>
+
+            <hr>
+
+            {% if user.is_authenticated %}
+                {% if user == article.author or user.role == "editor" %}
+                    <div class="alert alert-secondary d-flex justify-content-end gap-2 shadow-sm">
+                        <small class="align-self-center me-auto text-uppercase fw-bold">Management Tools:</small>
+                        <a href="{% url 'edit_article' article.pk %}" class="btn btn-warning btn-sm">Edit Article</a>
+                        <a href="{% url 'delete_article' article.pk %}" class="btn btn-danger btn-sm">Delete Article</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if article.image %}
+                <div class="mb-5 shadow-sm rounded overflow-hidden">
+                    <img src="{{ article.image.url }}" class="img-fluid w-100" alt="{{ article.title }}">
+                </div>
+            {% endif %}
+
+            <div class="article-body fs-5 mb-5" style="line-height: 1.8; color: #333;">
+                {{ article.content|linebreaks }}
+            </div>
+
+            <hr class="my-5">
+
+            <section class="comments-section p-4 bg-light rounded-3 shadow-sm mb-5">
+                <h3 class="mb-4 fw-bold">Comments ({{ comments.count }})</h3>
+                
+                {% if user.is_authenticated %}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ comment_form.content }}
+                                <button type="submit" class="btn btn-primary mt-3 px-4">Post Comment</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-secondary py-3 text-center">
+                        <a href="{% url 'login' %}" class="fw-bold">Log in</a> to join the conversation.
+                    </div>
+                {% endif %}
+
+                <div class="mt-4">
+                    {% for comment in comments %}
+                        <div class="card border-0 border-start border-primary border-4 mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h6 class="fw-bold mb-0">{{ comment.author.username }}</h6>
+                                    <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                                </div>
+                                <p class="card-text text-secondary mb-0">{{ comment.content }}</p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-center text-muted py-4">No comments yet.</p>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}
