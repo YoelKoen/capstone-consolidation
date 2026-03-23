@@ -228,6 +228,16 @@ def editor_dashboard(request):
 @login_required
 @user_passes_test(is_editor)
 def approve_article_html(request, article_id):
+    """
+    This method will be used to approve an article, mark it as live, and post a
+    notification to X (Twitter).
+
+    :param HttpRequest request: The object representing the current HTTP request
+    :param int article_id: The unique identifier of the article to be approved
+
+    :returns: A redirect to the editor dashboard
+    :rtype: HttpResponseRedirect
+    """
     article = get_object_or_404(Article, id=article_id)
     article.is_approved = True
     article.save()
