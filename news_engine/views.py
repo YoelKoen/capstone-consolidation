@@ -207,6 +207,15 @@ class NewsletterDeleteView(LoginRequiredMixin, ContentAccessMixin, DeleteView):
 @login_required
 @user_passes_test(is_editor)
 def editor_dashboard(request):
+    """
+    This method will be used to retrieve and display all pending articles and newsletters
+    that require editorial review.
+
+    :param HttpRequest request: The object representing the current HTTP request
+
+    :returns: A rendered HTML page containing the editor's dashboard
+    :rtype: HttpResponse
+    """
     pending_articles = Article.objects.filter(is_approved=False).order_by("-created_at")
     all_newsletters = Newsletter.objects.all().order_by("-created_at")
     return render(
