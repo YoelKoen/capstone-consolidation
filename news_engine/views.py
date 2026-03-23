@@ -252,6 +252,16 @@ def approve_article_html(request, article_id):
 @login_required
 @user_passes_test(is_editor)
 def reject_article_html(request, article_id):
+    """
+    This method will be used to permanently delete an article from the database
+    when it is rejected by an editor.
+
+    :param HttpRequest request: The object representing the current HTTP request
+    :param int article_id: The unique identifier of the article to be rejected
+
+    :returns: A redirect to the editor dashboard
+    :rtype: HttpResponseRedirect
+    """
     article = get_object_or_404(Article, id=article_id)
     article.delete()
     messages.warning(request, "Article rejected.")
