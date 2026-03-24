@@ -204,6 +204,16 @@ class NewsletterDeleteView(LoginRequiredMixin, ContentAccessMixin, DeleteView):
 # --- EDITOR DASHBOARD ---
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from .models import Article, Newsletter
+
+
+def is_editor(user):
+    return user.groups.filter(name="Editor").exists() or user.is_superuser
+
+
 @login_required
 @user_passes_test(is_editor)
 def editor_dashboard(request):
