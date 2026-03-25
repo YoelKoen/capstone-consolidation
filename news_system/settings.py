@@ -61,15 +61,11 @@ WSGI_APPLICATION = "news_system.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "NewsApp_DB",
-        "USER": "your_user",
-        "PASSWORD": "your_password",
-        "HOST": "host.docker.internal",
+        "NAME": os.getenv("DB_NAME", "NewsApp_DB"),
+        "USER": os.getenv("DB_USER", "root"),
+        "PASSWORD": os.getenv("DB_PASS", ""),
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
         "PORT": "3306",
-        "OPTIONS": {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-            "charset": "utf8mb4",
-        },
     }
 }
 
