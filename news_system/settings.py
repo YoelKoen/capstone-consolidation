@@ -62,12 +62,13 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "NewsApp_DB",
-        "USER": "root",
-        "PASSWORD": "749420",
-        "HOST": "127.0.0.1",
+        "USER": "your_user",
+        "PASSWORD": "your_password",
+        "HOST": "host.docker.internal",
         "PORT": "3306",
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            "charset": "utf8mb4",
         },
     }
 }
