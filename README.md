@@ -2,64 +2,56 @@ News Engine - Final Django Capstone
 Introduction
 The News Engine is a professional content management platform designed for digital journalism. This application allows administrators to manage news categories and articles, while providing a clean interface for readers to stay informed.
 
-1. Project Initialization
-Create your virtual environment (Windows)
-Initialize the virtual environment:
-python -m venv venv
+1. **Project Initialization**
+`Create your virtual environment (Windows)`
+`Initialize the virtual environment: python -m venv venv`
 
-Activate the virtual environment:
-.\venv\Scripts\activate
+`Activate the virtual environment: .\venv\Scripts\activate`
 
-Install dependencies:
-pip install -r requirements.txt
+`Install dependencies: pip install -r requirements.txt`
 
-2. Docker Orchestration (Recommended)
-This project uses Docker Compose to manage the application and its database dependencies automatically.
+2. **Docker Orchestration (Recommended)**
+`This project uses Docker Compose to manage the application and its database dependencies automatically.`
 
-Start the Services:
-docker-compose up --build
+`Start the Services: docker-compose up --build`
 
-Database Healthcheck:
-The system is configured with a healthcheck that ensures the MariaDB container is fully initialized before the Django web service attempts to connect.
+`Database Healthcheck: The system is configured with a healthcheck that ensures the MariaDB container is fully initialized before the Django web service attempts to connect.`
 
-Apply Migrations (Internal):
-While the containers are running, run this in a new terminal:
-docker-compose exec web python manage.py migrate
+`Apply Migrations (Internal): While the containers are running, run this in a new terminal:`
 
-3. Tech Stack
-This project utilizes a modern development stack:
+`docker-compose exec web python manage.py migrate`
 
-Framework: Django 5.2.7
+3. **Tech Stack**
+`This project utilizes a modern development stack:`
 
-Database: MariaDB 10.6
+`Framework: Django 5.2.7`
 
-Containerization: Docker & Docker Compose
+`Database: MariaDB 10.6`
 
-Documentation: Sphinx
+`Containerization: Docker & Docker Compose`
 
-4. Database Configuration
-The application is pre-configured to communicate with MariaDB.
+`Documentation: Sphinx`
 
-Database Name: NewsApp_DB
+4. **Database Configuration**
+`The application is pre-configured to communicate with MariaDB.`
 
-User: root
+`Database Name: NewsApp_DB`
 
-Host: db (Internal Docker Network) or 127.0.0.1 (Local)
+`User: root`
 
-Port: 3307 (Mapped to 3306)
+`Host: db (Internal Docker Network) or 127.0.0.1 (Local)`
 
-5. Final Launch Steps
+`Port: 3307 (Mapped to 3306)`
+
+5. **Final Launch Steps**
 Final Launch Commands (Windows)
-Build the Database Structure:
-python manage.py migrate
+`Build the Database Structure: python manage.py migrate`
 
-Create the Administrator:
-python manage.py createsuperuser
+`Create the Administrator: python manage.py createsuperuser`
 
-Launch the Server:
-python manage.py runserver
+`Launch the Server: python manage.py runserver`
 
-6. Documentation & Repository
-Sphinx Documentation: docs/build/html/index.html
+6. **Documentation & Repository**
+`Sphinx Documentation: docs/build/html/index.html`
 
-Remote Repository: https://github.com/YoelKoen/capstone-consolidation
+Remote Repository: `https://github.com/YoelKoen/capstone-consolidation`
